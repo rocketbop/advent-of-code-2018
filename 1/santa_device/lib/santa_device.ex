@@ -34,11 +34,9 @@ defmodule SantaDevice do
     {_, freqs} =
       do_adjustments(head, adjustments)
 
-    reversed = Enum.reverse freqs
-    build_list_until_duplicate_found(new_list, reversed, adjustments)
+    build_list_until_duplicate_found(new_list, Enum.reverse(freqs), adjustments)
   end
   def build_list_until_duplicate_found(new_list, [head | tail], adjustments) do
-    IO.inspect(head)
     cond do
       new_list |> Enum.any?(fn n -> n == head end) ->
         head
