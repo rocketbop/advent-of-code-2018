@@ -21,17 +21,41 @@ defmodule SantaDevice do
     final_freq
   end
 
-  defp do_adjustments(starting_freq) do
+  def first_duplicate(starting_freq) do
+    {_, freqs} =
+      do_adjustments(starting_freq)
+    
+    build_list_until_duplicate_found([], freqs)
+  end
+
+  def build_list_until_duplicate_found(new_list, []) do
+    [head | _] = new_list
+    {_, freqs} =
+      do_adjustments(head)
+
+    build_list_until_duplicate_found(new_list, freqs)
+  end
+  def build_list_until_duplicate_found(new_list, [head | tail]) do
+    cond do
+      new_list |> Enum.any?(fn n -> n == head end) ->
+        head
+      true ->
+        build_list_until_duplicate_found([head | new_list], tail)
+    end
+  end
+
+  def do_adjustments(starting_freq) do
     {final_freq, freqs} =
       File.stream!(path)
       |> Enum.map(&Integer.parse/1)
       |> Enum.map(fn {change, _} -> change end)
-      |> adjust(starting_freq, %{})
+      |> adjust(starting_freq, [])
   end
 
   def adjust([], current_freq, freqs), do: {current_freq, freqs}
   def adjust([head | tail], current_freq, freqs) do
-    adjust(tail, current_freq + head, freqs)
+    new_freq = current_freq + head
+    adjust(tail, new_freq, [new_freq | freqs])
   end
 
   defp path do
