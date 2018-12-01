@@ -16,7 +16,14 @@ defmodule SantaDevice do
   @input "input.txt"
   def calibrate(starting_freq) do
     File.stream!(path)
-    |> Enum.reduce(starting_freq, &adjust_freq/2)
+    |> Enum.map(&Integer.parse/1)
+    |> Enum.map(fn {change, _} -> change end)
+    |> adjust(starting_freq)
+  end
+
+  def adjust([], current_freq), do: current_freq 
+  def adjust([head | tail], current_freq) do
+    adjust(tail, current_freq + head)
   end
 
   defp path do
@@ -24,10 +31,5 @@ defmodule SantaDevice do
       {:ok, dir} -> Path.join([dir, "lib", @input])
       _ -> raise "Can't load the input file"
     end
-  end
-
-  defp adjust_freq(x, acc) do
-    {change, _} = Integer.parse(x)
-    acc + change
   end
 end
