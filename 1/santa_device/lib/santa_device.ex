@@ -15,15 +15,23 @@ defmodule SantaDevice do
   """
   @input "input.txt"
   def calibrate(starting_freq) do
-    File.stream!(path)
-    |> Enum.map(&Integer.parse/1)
-    |> Enum.map(fn {change, _} -> change end)
-    |> adjust(starting_freq)
+    {final_freq, _} =
+      do_adjustments(starting_freq)
+
+    final_freq
   end
 
-  def adjust([], current_freq), do: current_freq 
-  def adjust([head | tail], current_freq) do
-    adjust(tail, current_freq + head)
+  defp do_adjustments(starting_freq) do
+    {final_freq, freqs} =
+      File.stream!(path)
+      |> Enum.map(&Integer.parse/1)
+      |> Enum.map(fn {change, _} -> change end)
+      |> adjust(starting_freq, %{})
+  end
+
+  def adjust([], current_freq, freqs), do: {current_freq, freqs}
+  def adjust([head | tail], current_freq, freqs) do
+    adjust(tail, current_freq + head, freqs)
   end
 
   defp path do
