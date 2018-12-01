@@ -15,31 +15,27 @@ defmodule SantaDevice do
   """
   @input "input.txt"
   def calibrate(starting_freq) do
-    {final_freq, _} =
-      do_adjustments(starting_freq, read_in)
+    {final_freq, _} = do_adjustments(starting_freq, read_in)
 
     final_freq
   end
 
   def first_duplicate(starting_freq) do
     adjustments = read_in
-    {_, freqs} =
-      do_adjustments(starting_freq, adjustments)
-    
+    {_, freqs} = do_adjustments(starting_freq, adjustments)
+
     build_list_until_duplicate_found([], Enum.reverse(freqs), adjustments)
   end
 
-  def build_list_until_duplicate_found(new_list, [], adjustments) do
-    [head | _] = new_list
-    {_, freqs} =
-      do_adjustments(head, adjustments)
-
-    build_list_until_duplicate_found(new_list, Enum.reverse(freqs), adjustments)
-  end
   def build_list_until_duplicate_found(new_list, [head | tail], adjustments) do
     cond do
       new_list |> Enum.any?(fn n -> n == head end) ->
         head
+
+      Enum.empty?(tail) ->
+        {_, freqs} = do_adjustments(head, adjustments)
+        build_list_until_duplicate_found([head | new_list], Enum.reverse(freqs), adjustments)
+
       true ->
         build_list_until_duplicate_found([head | new_list], tail, adjustments)
     end
