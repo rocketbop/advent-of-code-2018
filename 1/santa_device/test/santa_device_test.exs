@@ -8,6 +8,6 @@ defmodule SantaDeviceTest do
   end
 
   test "it finds the first repeating freq" do
-    assert SantaDevice.first_duplicate(@starting_freq) == -130301
+    assert SantaDevice.first_duplicate(@starting_freq) == 390
   end
 end

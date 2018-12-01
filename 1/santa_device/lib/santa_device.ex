@@ -16,39 +16,46 @@ defmodule SantaDevice do
   @input "input.txt"
   def calibrate(starting_freq) do
     {final_freq, _} =
-      do_adjustments(starting_freq)
+      do_adjustments(starting_freq, read_in)
 
     final_freq
   end
 
   def first_duplicate(starting_freq) do
+    adjustments = read_in
     {_, freqs} =
-      do_adjustments(starting_freq)
+      do_adjustments(starting_freq, adjustments)
     
-    build_list_until_duplicate_found([], freqs)
+    build_list_until_duplicate_found([], Enum.reverse(freqs), adjustments)
   end
 
-  def build_list_until_duplicate_found(new_list, []) do
+  def build_list_until_duplicate_found(new_list, [], adjustments) do
     [head | _] = new_list
     {_, freqs} =
-      do_adjustments(head)
+      do_adjustments(head, adjustments)
 
-    build_list_until_duplicate_found(new_list, freqs)
+    reversed = Enum.reverse freqs
+    build_list_until_duplicate_found(new_list, reversed, adjustments)
   end
-  def build_list_until_duplicate_found(new_list, [head | tail]) do
+  def build_list_until_duplicate_found(new_list, [head | tail], adjustments) do
+    IO.inspect(head)
     cond do
       new_list |> Enum.any?(fn n -> n == head end) ->
         head
       true ->
-        build_list_until_duplicate_found([head | new_list], tail)
+        build_list_until_duplicate_found([head | new_list], tail, adjustments)
     end
   end
 
-  def do_adjustments(starting_freq) do
+  def read_in do
+    File.stream!(path)
+    |> Enum.map(&Integer.parse/1)
+    |> Enum.map(fn {change, _} -> change end)
+  end
+
+  def do_adjustments(starting_freq, adjustments) do
     {final_freq, freqs} =
-      File.stream!(path)
-      |> Enum.map(&Integer.parse/1)
-      |> Enum.map(fn {change, _} -> change end)
+      adjustments
       |> adjust(starting_freq, [])
   end
 
