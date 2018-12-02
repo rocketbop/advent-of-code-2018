@@ -1,11 +1,24 @@
+"""
+https://adventofcode.com/2018/day/2
+"""
+
 defmodule InventoryManagementSystem do
   def checksum(input) do
-    maps =
-      input
-      |> Enum.map(&String.to_charlist/1)
-      |> Enum.map(&charlist_count_map/1)
+    input
+    |> Enum.map(&String.to_charlist/1)
+    |> Enum.map(&charlist_count_map/1)
+    |> (fn maps ->
+          num_of_occurences(maps, 2) * num_of_occurences(maps, 3)
+        end).()
+  end
 
-    num_of_occurences(maps, 2) * num_of_occurences(maps, 3)
+  def get_checksum_from_input do
+    {:ok, dir} = File.cwd()
+
+    Path.join([dir, "inputs", "input2.txt"])
+    |> File.stream!()
+    |> Enum.map(& &1)
+    |> InventoryManagementSystem.checksum()
   end
 
   defp num_of_occurences(maps, num) do
