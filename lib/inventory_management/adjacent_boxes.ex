@@ -7,7 +7,7 @@ defmodule InventoryManagement.AdjacentBoxes do
     |> Enum.map(&String.to_charlist/1)
     |> adjacent_boxes
     |> common
-    |> List.to_string
+    |> List.to_string()
   end
 
   def adjacent_boxes(boxes) do
@@ -26,7 +26,7 @@ defmodule InventoryManagement.AdjacentBoxes do
 
   def common({box1, box2}) do
     box1
-    |> Enum.with_index
+    |> Enum.with_index()
     |> Enum.filter(fn {el, index} -> Enum.at(box2, index) == el end)
     |> Enum.map(fn {el, _} -> el end)
   end
