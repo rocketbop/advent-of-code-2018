@@ -13,7 +13,6 @@ defmodule Day1 do
   487
 
   """
-  @input "input.txt"
   def calibrate(starting_freq) do
     {final_freq, _} = do_adjustments(starting_freq, read_in)
 
@@ -62,7 +61,7 @@ defmodule Day1 do
 
   defp path() do
     case File.cwd() do
-      {:ok, dir} -> Path.join([dir, "lib", @input])
+      {:ok, dir} -> Path.join([dir, "inputs", "day1.txt"])
       _ -> raise "Can't load the input file"
     end
   end
