@@ -3,11 +3,15 @@ defmodule InventoryManagement.AdjacentBoxes do
 
   def common_chars(input) do
     input
-    |> Enum.map(&String.trim/1)
-    |> Enum.map(&String.to_charlist/1)
+    |> trimmed_charlists()
     |> adjacent_boxes()
     |> box_intersection()
-    |> List.to_string()
+  end
+
+  defp trimmed_charlists(list) do
+    list
+    |> Enum.map(&String.trim/1)
+    |> Enum.map(&String.to_charlist/1)
   end
 
   defp adjacent_boxes(boxes) do
@@ -29,5 +33,6 @@ defmodule InventoryManagement.AdjacentBoxes do
     |> Enum.with_index()
     |> Enum.filter(fn {el, index} -> Enum.at(box2, index) == el end)
     |> Enum.map(fn {el, _} -> el end)
+    |> List.to_string()
   end
 end
