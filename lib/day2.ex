@@ -5,19 +5,11 @@ https://adventofcode.com/2018/day/2
 defmodule Day2 do
   alias InventoryManagement.{AdjacentBoxes, Checksum}
 
-  def part1 do
-    checksum(read_in)
-  end
-
-  def part2 do
-    common_chars(read_in)
-  end
-
-  def checksum(input) do
+  def part1(input \\ read_in) do
     Checksum.calculate(input)
   end
 
-  def common_chars(input) do
+  def part2(input \\ read_in) do
     AdjacentBoxes.common_chars(input)
   end
 
