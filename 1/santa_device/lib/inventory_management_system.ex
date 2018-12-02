@@ -22,4 +22,13 @@ defmodule InventoryManagementSystem do
   def common_chars(input) do
     AdjacentBoxes.common_chars(input)
   end
+
+  def get_common_chars_from_input do
+    {:ok, dir} = File.cwd()
+
+    Path.join([dir, "inputs", "input2.txt"])
+    |> File.stream!()
+    |> Enum.map(& &1)
+    |> common_chars()
+  end
 end
