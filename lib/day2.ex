@@ -2,7 +2,7 @@
 https://adventofcode.com/2018/day/2
 """
 
-defmodule InventoryManagementSystem do
+defmodule Day2 do
   alias InventoryManagement.Checksum
   alias InventoryManagement.AdjacentBoxes
 

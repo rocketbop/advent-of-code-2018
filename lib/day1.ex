@@ -1,4 +1,4 @@
-defmodule SantaDevice do
+defmodule Day1 do
   @moduledoc """
   Reads an accompanying input file and walks through
   each line adding or subtracting the numbers
@@ -9,7 +9,7 @@ defmodule SantaDevice do
   Calibrate
   ## Examples
 
-  iex> SantaDevice.calibrate(10)
+  iex> Day1.calibrate(10)
   487
 
   """
