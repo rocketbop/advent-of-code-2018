@@ -1,17 +1,41 @@
 defmodule Day3 do
   def part1(input) do
     input
+    |> get_matrix
+    |> Map.values()
+    |> Enum.count(&(&1 > 1))
+  end
+
+  def part2 do
+  end
+
+  defp get_matrix(input) do
+    input
     |> Enum.map(&prepare_claim/1)
-
-    # |> Enum.reduce(%{}, fn {claim_num, claimed_co_ordinates}, matrix ->
-
-    #    end)
+    |> Enum.reduce(%{}, fn {claim_num, claimed_co_ordinates_list}, matrix ->
+      Enum.reduce(claimed_co_ordinates_list, matrix, fn co_ordinates, acc ->
+        acc = Map.update(acc, co_ordinates, 1, &(&1 + 1))
+      end)
+    end)
+    
   end
 
   def prepare_claim(line) do
-    [claim_num, _, starting_co_ordinates, distance] = String.split(line)
+    IO.inspect(line)
+    [claim_num, _, starting_co_ordinates, distance] = String.split(line, " ", trim: true)
 
-    [x_axis, y_axis] = String.split(distance, "x")
+    [{initial_x, _}, {initial_y, _}] =
+      starting_co_ordinates
+      |> String.replace(~r{:}, "")
+      |> String.split(",")
+      |> Enum.map(&Integer.parse/1)
+
+    [{x_axis, _}, {y_axis, _}] =
+      distance
+      |> String.split("x")
+      |> Enum.map(&Integer.parse/1)
+
+    {claim_num, co_ordinates(initial_x, initial_y, x_axis, y_axis)}
   end
 
   def co_ordinates(initial_x, initial_y, offset_x, offset_y) do
@@ -19,9 +43,5 @@ defmodule Day3 do
         y <- initial_y..(initial_y + offset_y - 1) do
       {x, y}
     end
-  end
-
-  defp square_inches_with_multiple_claims(map) do
-    Enum.filter(map, fn {key, value} -> value > 1 end)
   end
 end
