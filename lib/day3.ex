@@ -3,10 +3,14 @@ defmodule Day3 do
     input
     |> get_matrix
     |> Map.values()
-    |> Enum.count(&(&1 > 1))
+    |> Enum.count(fn list -> Enum.count(list) > 1 end)
   end
 
-  def part2 do
+  def part2(input) do
+    input
+    |> get_matrix
+    |> Map.values()
+    |> Enum.filter(fn list -> Enum.count(list) == 1 end)
   end
 
   defp get_matrix(input) do
@@ -14,14 +18,13 @@ defmodule Day3 do
     |> Enum.map(&prepare_claim/1)
     |> Enum.reduce(%{}, fn {claim_num, claimed_co_ordinates_list}, matrix ->
       Enum.reduce(claimed_co_ordinates_list, matrix, fn co_ordinates, acc ->
-        acc = Map.update(acc, co_ordinates, 1, &(&1 + 1))
+        acc = Map.update(acc, co_ordinates, [claim_num], fn val -> [claim_num | val] end)
       end)
     end)
     
   end
 
   def prepare_claim(line) do
-    IO.inspect(line)
     [claim_num, _, starting_co_ordinates, distance] = String.split(line, " ", trim: true)
 
     [{initial_x, _}, {initial_y, _}] =

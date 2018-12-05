@@ -3,9 +3,13 @@ defmodule Day3Test do
 
   @input ["#1 @ 1,3: 4x4", "#2 @ 3,1: 4x4", "#3 @ 5,5: 2x2"]
   @tag :pending
-  test "finds the number of inches with 2 or more claims" do
-    assert Day3.part1(@input) == 4
-  end
+  # test "finds the number of inches with 2 or more claims" do
+  #   assert Day3.part1(@input) == 4
+  # end
+
+  # test "finds the first square with only 1 claim" do
+  #   assert Day3.part2(@input) == "#1"
+  # end
 
   test "converts a claim string into a tuple" do
     claim_string = "#1 @ 1,3: 4x2"
