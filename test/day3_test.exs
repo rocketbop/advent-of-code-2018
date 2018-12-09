@@ -3,7 +3,6 @@ defmodule Day3Test do
 
   @input ["#1 @ 1,3: 4x4", "#2 @ 3,1: 4x4", "#3 @ 5,5: 2x2"]
 
-  @tag :focus
   test "finds the only claim with no shared inches" do
     assert Day3.part2(@input) == "#3"
   end

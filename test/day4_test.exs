@@ -23,6 +23,6 @@ defmodule Day4Test do
 
   @tag :focus
   test "it finds the checksum for strategy 1" do
-    Day4.strategy1(@input)
+    assert Day4.strategy1(@input) == 240
   end
 end

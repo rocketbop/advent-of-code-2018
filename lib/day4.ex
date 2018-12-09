@@ -1,43 +1,66 @@
 defmodule Day4 do
   def strategy1(input) do
-    input
-    |> prepare_input()
-    |> Enum.map(&parse_events/1)
-    |> sort_by_date()
-    |> group_guards_and_events([], nil)
-    |> Enum.map(&calculate_sleeping_time/1)
-    |> Enum.max_by(fn {num, id} -> num end)
-    |> IO.inspect
+    guards_and_sleeping_times =
+      input
+      |> prepare_input()
+      |> Enum.map(&parse_events/1)
+      |> sort_by_date()
+      |> group_guards_and_events([], nil)
+
+    {_, sleepiest_guard_id, ranges} =
+      guards_and_sleeping_times
+      |> Enum.map(&calculate_sleeping_time/1)
+      |> Enum.max_by(fn {num, id, _} -> num end)
+
+    most_sleepy_minute(ranges) * String.to_integer(sleepiest_guard_id)
+  end
+
+  def most_sleepy_minute(ranges) do
+    ranges
+    |> Enum.map(fn {a, b} -> {a.minute, b.minute} end)
+    |> Enum.reduce(%{}, fn {sleep, wake}, acc ->
+      Enum.reduce(sleep..(wake - 1), acc, fn minute, inner_acc ->
+        inner_acc = Map.update(inner_acc, minute, 1, &(&1 + 1))
+        inner_acc
+      end)
+    end)
+    |> Enum.max_by(fn {k, v} -> v end)
+    |> elem(0)
   end
 
   def calculate_sleeping_time({_, date_descs}) do
-    calculate_sleeping_time(date_descs, 0, nil)
+    calculate_sleeping_time(date_descs, 0, nil, [])
   end
 
-  def calculate_sleeping_time([head | tail], time_sleeping, guard_num) do
+  def calculate_sleeping_time([head | tail], time_sleeping, guard_num, ranges) do
     case head do
       {_, :awake, _, guard_num} ->
-        calculate_sleeping_time(tail, time_sleeping, guard_num)
+        calculate_sleeping_time(tail, time_sleeping, guard_num, ranges)
+
       {date_time, :asleep, _, guard_num} ->
-        calculate_sleeping_time(tail, time_sleeping, date_time, guard_num)
+        calculate_sleeping_time(tail, time_sleeping, date_time, guard_num, ranges)
     end
   end
 
-  def calculate_sleeping_time([head | tail], time_sleeping, time_fell_asleep, guard_num) do
+  def calculate_sleeping_time([head | tail], time_sleeping, time_fell_asleep, guard_num, ranges) do
     case head do
       {time_woke, :awake, _, guard_num} ->
         time_just_slept =
           time_woke
           |> DateTime.diff(time_fell_asleep, :second)
           |> div(60)
-        calculate_sleeping_time(tail, time_sleeping + time_just_slept, guard_num)
+
+        calculate_sleeping_time(tail, time_sleeping + time_just_slept, guard_num, [
+          {time_fell_asleep, time_woke} | ranges
+        ])
+
       {_, :asleep, _, _} ->
-        calculate_sleeping_time(tail, time_sleeping, time_fell_asleep, guard_num)
+        calculate_sleeping_time(tail, time_sleeping, time_fell_asleep, guard_num, ranges)
     end
   end
 
-  def calculate_sleeping_time([], time_sleeping, guard_num) do
-    {time_sleeping, guard_num}
+  def calculate_sleeping_time([], time_sleeping, guard_num, ranges) do
+    {time_sleeping, guard_num, ranges}
   end
 
   def group_guards_and_events([{date, desc} | tail], guard_events, current_guard_id) do
