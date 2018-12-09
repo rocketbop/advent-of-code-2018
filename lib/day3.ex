@@ -8,10 +8,36 @@ defmodule Day3 do
 
   def part2(input) do
     input
-    |> get_matrix
-    |> Map.values()
-    |> Enum.filter(fn list -> Enum.count(list) == 1 end)
+    |> get_matrix()
+    |> guesses_and_matrix()
+    |> Enum.find(fn {guess, matrix} -> guess_without_overlaps?(guess, matrix) end)
+    |> elem(0)
   end
+
+  def guesses_and_matrix(matrix) do
+    matrix
+    |> Map.values()
+    |> List.flatten()
+    |> Enum.uniq()
+    |> Enum.map(&{&1, matrix})
+  end
+
+  def guess_without_overlaps?(guess, matrix) do
+    matrix
+    |> Enum.filter(fn {k, v} -> Enum.member?(v, guess) end)
+    |> Enum.all?(fn {k, v} -> Enum.count(v) == 1 end)
+  end
+
+
+
+  """
+  Return
+    %{
+      {1, 3} => ["#1"],
+      {1, 4} => ["#1"],
+      {1, 5} => ["#1"],
+    }
+  """
 
   defp get_matrix(input) do
     input
@@ -21,7 +47,6 @@ defmodule Day3 do
         acc = Map.update(acc, co_ordinates, [claim_num], fn val -> [claim_num | val] end)
       end)
     end)
-    
   end
 
   def prepare_claim(line) do
